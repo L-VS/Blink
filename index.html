@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Blink - Navigateur Personnalisable</title>
+    <title>Blink OS - Navigateur Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
         :root {
             --primary: #5e35b1;
@@ -18,6 +19,9 @@
             --radius: 12px;
             --transition: all 0.3s ease;
             --background-url: url('https://images.unsplash.com/photo-1519681393784-d120267933ba');
+            --glass-bg: rgba(30, 30, 46, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --blur-amount: 10px;
         }
 
         * {
@@ -39,29 +43,7 @@
             position: relative;
             touch-action: manipulation;
             transition: background 1s ease;
-        }
-
-        .particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(126, 87, 194, 0.3);
-            animation: float 15s infinite linear;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0) translateX(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+            backdrop-filter: blur(5px);
         }
 
         /* Interface principale */
@@ -70,17 +52,16 @@
             grid-template-rows: 70px 1fr 80px;
             height: 100vh;
             position: relative;
-            backdrop-filter: blur(3px);
         }
 
         /* Header */
         .app-header {
-            background: rgba(30, 30, 46, 0.9);
-            backdrop-filter: blur(10px);
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--blur-amount));
             display: flex;
             align-items: center;
             padding: 0 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--glass-border);
             z-index: 100;
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
         }
@@ -181,8 +162,8 @@
         /* Sidebar */
         .sidebar {
             background: rgba(25, 25, 40, 0.85);
-            backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(var(--blur-amount));
+            border-right: 1px solid var(--glass-border);
             padding: 20px 0;
             overflow-y: auto;
             z-index: 50;
@@ -229,54 +210,6 @@
             text-align: center;
         }
 
-        /* Apps Grid */
-        .apps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 20px;
-            padding: 20px;
-            max-height: 100%;
-            overflow-y: auto;
-        }
-
-        .app-card {
-            background: rgba(40, 40, 60, 0.7);
-            border-radius: var(--radius);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 15px 10px;
-            transition: var(--transition);
-            cursor: pointer;
-            text-decoration: none;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-        }
-
-        .app-card:hover {
-            background: rgba(94, 53, 177, 0.4);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .app-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-
-        .app-name {
-            font-size: 12px;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
         /* Browser View */
         .browser-view {
             display: flex;
@@ -290,8 +223,8 @@
         .browser-controls {
             display: flex;
             padding: 10px 15px;
-            background: rgba(30, 30, 46, 0.9);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--glass-border);
             gap: 10px;
         }
 
@@ -494,13 +427,13 @@
 
         /* Footer */
         .app-footer {
-            background: rgba(30, 30, 46, 0.9);
-            backdrop-filter: blur(10px);
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--blur-amount));
             display: flex;
             justify-content: space-around;
             align-items: center;
             padding: 0 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid var(--glass-border);
             z-index: 100;
         }
 
@@ -538,16 +471,6 @@
 
         .fullscreen-mode .joycon-controls {
             display: none;
-        }
-
-        /* Animation d'entrée */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-in {
-            animation: fadeIn 0.5s ease-out forwards;
         }
 
         /* Vue Paramètres */
@@ -708,6 +631,475 @@
             animation: fadeIn 0.3s, fadeOut 0.3s 2s forwards;
         }
 
+        /* Vue Cloud Gaming */
+        .cloud-gaming-view {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .cloud-card {
+            width: 100%;
+            max-width: 800px;
+            background: var(--glass-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .cloud-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .cloud-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .cloud-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .cloud-desc {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .cloud-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .cloud-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Vue OS */
+        .os-view {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .os-card {
+            background: var(--glass-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .os-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .os-icon {
+            font-size: 48px;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .os-title {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Clavier virtuel */
+        .virtual-keyboard {
+            position: fixed;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--blur-amount));
+            padding: 15px;
+            border-top: 1px solid var(--glass-border);
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 5px;
+            z-index: 300;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .virtual-keyboard.active {
+            transform: translateY(0);
+        }
+
+        .keyboard-key {
+            background: rgba(40, 40, 60, 0.7);
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            color: white;
+            font-size: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .keyboard-key:hover {
+            background: var(--secondary);
+        }
+
+        .keyboard-key.special {
+            background: rgba(94, 53, 177, 0.6);
+        }
+
+        /* Vue Sociale */
+        .social-view {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-header {
+            padding: 15px;
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            background: var(--glass-bg);
+            align-self: flex-start;
+            position: relative;
+        }
+
+        .chat-message.self {
+            background: var(--accent);
+            align-self: flex-end;
+        }
+
+        .message-user {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .message-content {
+            word-break: break-word;
+        }
+
+        .message-media {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 8px;
+        }
+
+        .message-time {
+            font-size: 10px;
+            text-align: right;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            padding: 10px 15px;
+            background: var(--glass-bg);
+            border-top: 1px solid var(--glass-border);
+            gap: 10px;
+            align-items: center;
+        }
+
+        .media-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 20px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .media-btn:hover {
+            background: rgba(94, 53, 177, 0.3);
+            color: var(--accent);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(20, 20, 35, 0.8);
+            border: 2px solid rgba(126, 87, 194, 0.4);
+            border-radius: 30px;
+            padding: 10px 20px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-send-btn {
+            background: var(--accent);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* Vue Fichiers */
+        .files-view {
+            padding: 20px;
+            overflow-y: auto;
+            background: rgba(15, 15, 26, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .file-item {
+            background: rgba(40, 40, 60, 0.7);
+            border-radius: var(--radius);
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-item:hover {
+            background: rgba(94, 53, 177, 0.4);
+        }
+
+        .file-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .file-name {
+            font-size: 12px;
+            word-break: break-word;
+        }
+
+        .qr-scanner-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+
+        .qr-scanner {
+            width: 80%;
+            max-width: 500px;
+            height: auto;
+            border: 3px solid var(--accent);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .qr-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .qr-result {
+            margin-top: 20px;
+            color: white;
+            text-align: center;
+            max-width: 80%;
+        }
+
+        .qr-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--accent);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Emulateur Android */
+        .android-emulator {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: black;
+        }
+
+        .emulator-header {
+            padding: 10px;
+            background: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .emulator-screen {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .emulator-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .emulator-controls {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background: var(--dark);
+        }
+
+        .emulator-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* Plein écran */
+        .fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2000;
+            background: black;
+        }
+
+        .fullscreen .webview-container {
+            height: 100vh;
+        }
+
+        .fullscreen .browser-controls {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .fullscreen-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 101;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .main-content {
@@ -729,8 +1121,8 @@
                 transform: translateX(0);
             }
             
-            .background-selector {
-                grid-template-columns: repeat(2, 1fr);
+            .os-view {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -757,13 +1149,11 @@
     </style>
 </head>
 <body>
-    <div class="particles" id="particles"></div>
-    
     <div class="app-container">
         <header class="app-header">
             <div class="logo">
                 <div class="logo-icon"><i class="fas fa-bolt"></i></div>
-                <div class="logo-text">Blink</div>
+                <div class="logo-text">Blink OS</div>
             </div>
             
             <div class="search-container">
@@ -775,7 +1165,7 @@
             <div class="header-actions">
                 <button class="header-btn" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
                 <button class="header-btn" id="fullscreen-toggle"><i class="fas fa-expand"></i></button>
-                <button class="header-btn" id="apps-toggle"><i class="fas fa-th"></i></button>
+                <button class="header-btn" id="keyboard-toggle"><i class="fas fa-keyboard"></i></button>
             </div>
         </header>
         
@@ -798,34 +1188,42 @@
                 </div>
                 
                 <div class="sidebar-section">
-                    <div class="sidebar-title">Services Cloud</div>
+                    <div class="sidebar-title">Cloud & OS</div>
                     <div class="nav-item" data-view="android">
                         <i class="fab fa-android nav-icon"></i>
                         <span>Android Cloud</span>
-                    </div>
-                    <div class="nav-item" data-view="ubuntu">
-                        <i class="fab fa-ubuntu nav-icon"></i>
-                        <span>Ubuntu Server</span>
                     </div>
                     <div class="nav-item" data-view="gaming">
                         <i class="fas fa-gamepad nav-icon"></i>
                         <span>Cloud Gaming</span>
                     </div>
+                    <div class="nav-item" data-view="os">
+                        <i class="fas fa-desktop nav-icon"></i>
+                        <span>Systèmes d'exploitation</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Social</div>
+                    <div class="nav-item" data-view="chat">
+                        <i class="fas fa-comments nav-icon"></i>
+                        <span>Messagerie</span>
+                    </div>
+                    <div class="nav-item" data-view="friends">
+                        <i class="fas fa-user-friends nav-icon"></i>
+                        <span>Amis</span>
+                    </div>
                 </div>
                 
                 <div class="sidebar-section">
                     <div class="sidebar-title">Outils</div>
-                    <div class="nav-item">
-                        <i class="fas fa-download nav-icon"></i>
-                        <span>Téléchargements</span>
+                    <div class="nav-item" data-view="files">
+                        <i class="fas fa-folder nav-icon"></i>
+                        <span>Fichiers</span>
                     </div>
-                    <div class="nav-item">
-                        <i class="fas fa-history nav-icon"></i>
-                        <span>Historique</span>
-                    </div>
-                    <div class="nav-item">
-                        <i class="fas fa-bookmark nav-icon"></i>
-                        <span>Favoris</span>
+                    <div class="nav-item" data-view="media">
+                        <i class="fas fa-play-circle nav-icon"></i>
+                        <span>Média</span>
                     </div>
                     <div class="nav-item" data-view="settings">
                         <i class="fas fa-cog nav-icon"></i>
@@ -840,8 +1238,8 @@
                     <div class="home-logo">
                         <i class="fas fa-bolt"></i>
                     </div>
-                    <h1 class="home-title">Blink Navigateur</h1>
-                    <p class="home-subtitle">Votre expérience web personnalisée sur Nintendo Switch</p>
+                    <h1 class="home-title">Blink OS</h1>
+                    <p class="home-subtitle">Votre univers numérique sur Nintendo Switch</p>
                     
                     <div class="home-search-container">
                         <i class="fas fa-search home-search-icon"></i>
@@ -856,13 +1254,13 @@
                             <i class="fab fa-youtube"></i>
                             <span>YouTube</span>
                         </div>
-                        <div class="quick-link" data-url="https://twitter.com">
-                            <i class="fab fa-twitter"></i>
-                            <span>Twitter</span>
-                        </div>
                         <div class="quick-link" data-url="https://netflix.com">
                             <i class="fab fa-netflix"></i>
                             <span>Netflix</span>
+                        </div>
+                        <div class="quick-link" data-url="https://poki.com">
+                            <i class="fas fa-gamepad"></i>
+                            <span>Jeux en ligne</span>
                         </div>
                         <div class="quick-link" data-url="https://github.com">
                             <i class="fab fa-github"></i>
@@ -872,9 +1270,9 @@
                             <i class="fab fa-wikipedia-w"></i>
                             <span>Wikipedia</span>
                         </div>
-                        <div class="quick-link" data-url="https://twitch.tv">
-                            <i class="fab fa-twitch"></i>
-                            <span>Twitch</span>
+                        <div class="quick-link" data-url="https://brawlstars.com">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>Brawl Stars</span>
                         </div>
                     </div>
                 </div>
@@ -885,118 +1283,320 @@
                         <button class="control-btn" id="back-btn"><i class="fas fa-arrow-left"></i></button>
                         <button class="control-btn" id="forward-btn"><i class="fas fa-arrow-right"></i></button>
                         <button class="control-btn" id="refresh-btn"><i class="fas fa-sync"></i></button>
-                        <input type="text" class="url-bar" id="url-input" value="https://github.com/blink-switch">
+                        <input type="text" class="url-bar" id="url-input" value="https://google.com">
                         <button class="control-btn" id="go-btn"><i class="fas fa-arrow-right"></i></button>
+                        <button class="control-btn" id="fullscreen-btn"><i class="fas fa-expand"></i></button>
                     </div>
                     <div class="webview-container">
                         <iframe class="webview" id="webview" src="about:blank"></iframe>
                     </div>
                 </div>
                 
-                <!-- Vue applications -->
-                <div class="browser-view" id="apps-view" style="display:none;">
-                    <div class="apps-grid">
-                        <!-- ... (contenu des applications) ... -->
+                <!-- Vue Cloud Gaming -->
+                <div class="cloud-gaming-view" id="gaming-view" style="display:none;">
+                    <div class="cloud-card">
+                        <div class="cloud-header">
+                            <div class="cloud-icon">
+                                <i class="fab fa-nvidia"></i>
+                            </div>
+                            <div>
+                                <div class="cloud-title">GeForce NOW</div>
+                                <div class="cloud-desc">Jeux PC en streaming haute performance</div>
+                            </div>
+                        </div>
+                        <button class="cloud-btn" id="geforce-btn">
+                            <i class="fas fa-play"></i> Démarrer GeForce NOW
+                        </button>
+                    </div>
+                    
+                    <div class="cloud-card">
+                        <div class="cloud-header">
+                            <div class="cloud-icon">
+                                <i class="fab fa-xbox"></i>
+                            </div>
+                            <div>
+                                <div class="cloud-title">Xbox Cloud Gaming</div>
+                                <div class="cloud-desc">Bibliothèque Xbox Game Pass</div>
+                            </div>
+                        </div>
+                        <button class="cloud-btn" id="xcloud-btn">
+                            <i class="fas fa-play"></i> Démarrer Xbox Cloud
+                        </button>
+                    </div>
+                    
+                    <div class="cloud-card">
+                        <div class="cloud-header">
+                            <div class="cloud-icon">
+                                <i class="fab fa-google"></i>
+                            </div>
+                            <div>
+                                <div class="cloud-title">Google Stadia</div>
+                                <div class="cloud-desc">Jeux sans téléchargement</div>
+                            </div>
+                        </div>
+                        <button class="cloud-btn" id="stadia-btn">
+                            <i class="fas fa-play"></i> Démarrer Stadia
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Vue Systèmes d'exploitation -->
+                <div class="os-view" id="os-view" style="display:none;">
+                    <div class="os-card" data-os="android">
+                        <div class="os-icon">
+                            <i class="fab fa-android"></i>
+                        </div>
+                        <div class="os-title">Android OS</div>
+                        <div class="cloud-desc">Système d'exploitation mobile</div>
+                        <button class="cloud-btn" id="android-btn">
+                            <i class="fas fa-play"></i> Démarrer
+                        </button>
+                    </div>
+                    
+                    <div class="os-card" data-os="ubuntu">
+                        <div class="os-icon">
+                            <i class="fab fa-ubuntu"></i>
+                        </div>
+                        <div class="os-title">Ubuntu Desktop</div>
+                        <div class="cloud-desc">Environnement Linux complet</div>
+                        <button class="cloud-btn" id="ubuntu-btn">
+                            <i class="fas fa-play"></i> Démarrer
+                        </button>
+                    </div>
+                    
+                    <div class="os-card" data-os="windows">
+                        <div class="os-icon">
+                            <i class="fab fa-windows"></i>
+                        </div>
+                        <div class="os-title">Windows 10</div>
+                        <div class="cloud-desc">Système d'exploitation de bureau</div>
+                        <button class="cloud-btn" id="windows-btn">
+                            <i class="fas fa-play"></i> Démarrer
+                        </button>
+                    </div>
+                    
+                    <div class="os-card" data-os="chrome">
+                        <div class="os-icon">
+                            <i class="fab fa-chrome"></i>
+                        </div>
+                        <div class="os-title">Chrome OS</div>
+                        <div class="cloud-desc">Système basé sur le navigateur</div>
+                        <button class="cloud-btn" id="chrome-btn">
+                            <i class="fas fa-play"></i> Démarrer
+                        </button>
                     </div>
                 </div>
                 
                 <!-- Vue Paramètres personnalisables -->
-                <div class="browser-view" id="settings-view" style="display:none;">
-                    <div class="settings-view">
-                        <div class="settings-section">
-                            <h2 class="settings-title"><i class="fas fa-user"></i> Mon Compte</h2>
-                            <div class="settings-option">
-                                <div class="option-label">
-                                    <i class="fas fa-user"></i>
-                                    <span>Nom d'utilisateur</span>
-                                </div>
-                                <input type="text" id="username" value="Gamer123" class="url-bar" style="width: auto; padding: 5px 10px;">
+                <div class="settings-view" id="settings-view" style="display:none;">
+                    <div class="settings-section">
+                        <h2 class="settings-title"><i class="fas fa-user"></i> Mon Compte</h2>
+                        <div class="settings-option">
+                            <div class="option-label">
+                                <i class="fas fa-user"></i>
+                                <span>Nom d'utilisateur</span>
                             </div>
-                            <div class="settings-option">
-                                <div class="option-label">
-                                    <i class="fas fa-envelope"></i>
-                                    <span>Email</span>
-                                </div>
-                                <input type="email" id="email" value="gamer@example.com" class="url-bar" style="width: auto; padding: 5px 10px;">
+                            <input type="text" id="username" value="Gamer123" class="url-bar" style="width: auto; padding: 5px 10px;">
+                        </div>
+                        <div class="settings-option">
+                            <div class="option-label">
+                                <i class="fas fa-envelope"></i>
+                                <span>Email</span>
                             </div>
-                            <div class="settings-option">
-                                <div class="option-label">
-                                    <i class="fas fa-key"></i>
-                                    <span>Mot de passe</span>
-                                </div>
-                                <button class="control-btn" id="change-password">
-                                    <i class="fas fa-edit"></i>
-                                </button>
+                            <input type="email" id="email" value="gamer@example.com" class="url-bar" style="width: auto; padding: 5px 10px;">
+                        </div>
+                        <div class="settings-option">
+                            <div class="option-label">
+                                <i class="fas fa-key"></i>
+                                <span>Mot de passe</span>
+                            </div>
+                            <button class="control-btn" id="change-password">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h2 class="settings-title"><i class="fas fa-palette"></i> Personnalisation</h2>
+                        <div class="settings-option">
+                            <div class="option-label">
+                                <i class="fas fa-moon"></i>
+                                <span>Mode sombre</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="dark-mode" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="settings-option">
+                            <div class="option-label">
+                                <i class="fas fa-paint-brush"></i>
+                                <span>Couleur d'accent</span>
+                            </div>
+                            <div class="theme-selector">
+                                <div class="theme-color" data-color="#ff4081" style="background:#ff4081;"></div>
+                                <div class="theme-color" data-color="#35b1ff" style="background:#35b1ff;"></div>
+                                <div class="theme-color" data-color="#4caf50" style="background:#4caf50;"></div>
+                                <div class="theme-color" data-color="#ff9800" style="background:#ff9800;"></div>
+                                <div class="theme-color" data-color="#9c27b0" style="background:#9c27b0;"></div>
                             </div>
                         </div>
                         
-                        <div class="settings-section">
-                            <h2 class="settings-title"><i class="fas fa-palette"></i> Personnalisation</h2>
-                            <div class="settings-option">
-                                <div class="option-label">
-                                    <i class="fas fa-moon"></i>
-                                    <span>Mode sombre</span>
-                                </div>
-                                <label class="switch">
-                                    <input type="checkbox" id="dark-mode" checked>
-                                    <span class="slider"></span>
-                                </label>
+                        <div class="settings-option">
+                            <div class="option-label">
+                                <i class="fas fa-image"></i>
+                                <span>Fond d'écran</span>
                             </div>
-                            
-                            <div class="settings-option">
-                                <div class="option-label">
-                                    <i class="fas fa-paint-brush"></i>
-                                    <span>Couleur d'accent</span>
-                                </div>
-                                <div class="theme-selector">
-                                    <div class="theme-color" data-color="#ff4081" style="background:#ff4081;"></div>
-                                    <div class="theme-color" data-color="#35b1ff" style="background:#35b1ff;"></div>
-                                    <div class="theme-color" data-color="#4caf50" style="background:#4caf50;"></div>
-                                    <div class="theme-color" data-color="#ff9800" style="background:#ff9800;"></div>
-                                    <div class="theme-color" data-color="#9c27b0" style="background:#9c27b0;"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="settings-option">
-                                <div class="option-label">
-                                    <i class="fas fa-image"></i>
-                                    <span>Fond d'écran</span>
-                                </div>
-                                <div class="background-selector">
-                                    <div class="background-option active" data-bg="https://images.unsplash.com/photo-1519681393784-d120267933ba" style="background-image:url('https://images.unsplash.com/photo-1519681393784-d120267933ba')"></div>
-                                    <div class="background-option" data-bg="https://images.unsplash.com/photo-1485470733090-0aae1788d5af" style="background-image:url('https://images.unsplash.com/photo-1485470733090-0aae1788d5af')"></div>
-                                    <div class="background-option" data-bg="https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07" style="background-image:url('https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07')"></div>
-                                    <div class="background-option" data-bg="https://images.unsplash.com/photo-1505506874110-6a7a69069a08" style="background-image:url('https://images.unsplash.com/photo-1505506874110-6a7a69069a08')"></div>
-                                    <div class="background-option" data-bg="https://images.unsplash.com/photo-1475274047050-1d0c0975c63e" style="background-image:url('https://images.unsplash.com/photo-1475274047050-1d0c0975c63e')"></div>
-                                    <div class="background-option" data-bg="https://images.unsplash.com/photo-1518837695005-2083093ee35b" style="background-image:url('https://images.unsplash.com/photo-1518837695005-2083093ee35b')"></div>
-                                </div>
+                            <div class="background-selector">
+                                <div class="background-option active" data-bg="https://images.unsplash.com/photo-1519681393784-d120267933ba" style="background-image:url('https://images.unsplash.com/photo-1519681393784-d120267933ba')"></div>
+                                <div class="background-option" data-bg="https://images.unsplash.com/photo-1485470733090-0aae1788d5af" style="background-image:url('https://images.unsplash.com/photo-1485470733090-0aae1788d5af')"></div>
+                                <div class="background-option" data-bg="https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07" style="background-image:url('https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07')"></div>
+                                <div class="background-option" data-bg="https://images.unsplash.com/photo-1505506874110-6a7a69069a08" style="background-image:url('https://images.unsplash.com/photo-1505506874110-6a7a69069a08')"></div>
+                                <div class="background-option" data-bg="https://images.unsplash.com/photo-1475274047050-1d0c0975c63e" style="background-image:url('https://images.unsplash.com/photo-1475274047050-1d0c0975c63e')"></div>
+                                <div class="background-option" data-bg="https://images.unsplash.com/photo-1518837695005-2083093ee35b" style="background-image:url('https://images.unsplash.com/photo-1518837695005-2083093ee35b')"></div>
                             </div>
                         </div>
-                        
-                        <div class="settings-section">
-                            <h2 class="settings-title"><i class="fas fa-info-circle"></i> À propos</h2>
-                            <div class="settings-option">
-                                <div class="option-label">
-                                    <i class="fas fa-code"></i>
-                                    <span>Version</span>
-                                </div>
-                                <span>Blink 2.0 Premium</span>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h2 class="settings-title"><i class="fas fa-language"></i> Langue</h2>
+                        <div class="settings-option">
+                            <div class="option-label">
+                                <i class="fas fa-globe"></i>
+                                <span>Langue du système</span>
                             </div>
-                            <div class="settings-option">
-                                <div class="option-label">
-                                    <i class="fas fa-copyright"></i>
-                                    <span>Licence</span>
-                                </div>
-                                <span>MIT Open Source</span>
+                            <select id="system-lang" class="url-bar" style="width: auto; padding: 5px 10px;">
+                                <option value="auto">Automatique</option>
+                                <option value="fr">Français</option>
+                                <option value="en">English</option>
+                                <option value="es">Español</option>
+                                <option value="de">Deutsch</option>
+                                <option value="ja">日本語</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h2 class="settings-title"><i class="fas fa-database"></i> Stockage</h2>
+                        <div class="settings-option">
+                            <div class="option-label">
+                                <i class="fas fa-hdd"></i>
+                                <span>Espace utilisé</span>
                             </div>
-                            <button class="cloud-btn" style="width:100%; margin-top:15px;">
-                                <i class="fas fa-sync"></i>
-                                Vérifier les mises à jour
+                            <span id="storage-used">15.2 MB / 100 MB</span>
+                        </div>
+                        <div class="settings-option">
+                            <div class="option-label">
+                                <i class="fas fa-trash"></i>
+                                <span>Effacer le cache</span>
+                            </div>
+                            <button class="control-btn" id="clear-cache">
+                                <i class="fas fa-trash-alt"></i>
                             </button>
                         </div>
                     </div>
                 </div>
+                
+                <!-- Vue de chat social -->
+                <div class="social-view" id="chat-view" style="display:none;">
+                    <div class="chat-header">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <div>Chat Blink OS</div>
+                            <div class="cloud-desc">Connecté en tant que <span id="chat-username">Gamer123</span></div>
+                        </div>
+                    </div>
+                    <div class="chat-container" id="chat-messages">
+                        <div class="chat-message">
+                            <div class="message-user">Supercell</div>
+                            <div class="message-content">Salut! Comment vas-tu?</div>
+                            <div class="message-time">10:25</div>
+                        </div>
+                        <div class="chat-message self">
+                            <div class="message-user">Vous</div>
+                            <div class="message-content">Très bien, merci! J'adore Blink OS sur Switch!</div>
+                            <div class="message-time">10:26</div>
+                        </div>
+                        <div class="chat-message">
+                            <div class="message-user">Supercell</div>
+                            <div class="message-content">Tu as essayé Brawl Stars? C'est incroyable!</div>
+                            <div class="message-time">10:27</div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <button class="media-btn" id="voice-btn"><i class="fas fa-microphone"></i></button>
+                        <button class="media-btn" id="photo-btn"><i class="fas fa-camera"></i></button>
+                        <button class="media-btn" id="video-btn"><i class="fas fa-video"></i></button>
+                        <input type="text" class="chat-input" id="chat-input" placeholder="Écrire un message...">
+                        <button class="chat-send-btn" id="chat-send">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Vue Fichiers -->
+                <div class="files-view" id="files-view" style="display:none;">
+                    <div class="settings-section">
+                        <h2 class="settings-title"><i class="fas fa-folder"></i> Gestion des fichiers</h2>
+                        <button class="cloud-btn" id="scan-qr-btn">
+                            <i class="fas fa-qrcode"></i> Scanner QR Code pour transférer
+                        </button>
+                    </div>
+                    
+                    <div class="file-grid" id="file-grid">
+                        <div class="file-item">
+                            <div class="file-icon"><i class="fas fa-file-image"></i></div>
+                            <div class="file-name">Photo_01.jpg</div>
+                        </div>
+                        <div class="file-item">
+                            <div class="file-icon"><i class="fas fa-file-video"></i></div>
+                            <div class="file-name">Video_01.mp4</div>
+                        </div>
+                        <div class="file-item">
+                            <div class="file-icon"><i class="fas fa-file-audio"></i></div>
+                            <div class="file-name">Audio_01.mp3</div>
+                        </div>
+                        <div class="file-item">
+                            <div class="file-icon"><i class="fas fa-file-pdf"></i></div>
+                            <div class="file-name">Document.pdf</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Vue Android Emulator -->
+                <div class="android-emulator" id="android-view" style="display:none;">
+                    <div class="emulator-header">
+                        <i class="fab fa-android" style="color:#3DDC84;"></i>
+                        <span>Android OS - Brawl Stars</span>
+                        <button class="control-btn" style="margin-left: auto;" id="exit-android"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="emulator-screen">
+                        <iframe class="emulator-frame" id="android-frame" src="https://appetize.io/embed/8q5nz0q7vzwkfp7a7b4bq7j80?device=nexus5&scale=75&orientation=portrait&osVersion=10.0" frameborder="0"></iframe>
+                    </div>
+                    <div class="emulator-controls">
+                        <button class="emulator-btn"><i class="fas fa-home"></i></button>
+                        <button class="emulator-btn"><i class="fas fa-arrow-left"></i></button>
+                        <button class="emulator-btn"><i class="fas fa-square"></i></button>
+                        <button class="emulator-btn"><i class="fas fa-bars"></i></button>
+                    </div>
+                </div>
             </main>
+        </div>
+        
+        <!-- Clavier virtuel -->
+        <div class="virtual-keyboard" id="virtual-keyboard">
+            <!-- Les touches seront générées dynamiquement -->
+        </div>
+        
+        <!-- QR Scanner -->
+        <div class="qr-scanner-container" id="qr-scanner">
+            <button class="qr-close" id="close-qr"><i class="fas fa-times"></i></button>
+            <video class="qr-scanner" id="qr-video"></video>
+            <div class="qr-overlay"></div>
+            <div class="qr-result" id="qr-result"></div>
         </div>
         
         <!-- Contrôles Joy-Con -->
@@ -1018,9 +1618,13 @@
                 <i class="fas fa-compass footer-icon"></i>
                 <span class="footer-text">Naviguer</span>
             </div>
-            <div class="footer-btn" data-view="apps">
-                <i class="fas fa-th footer-icon"></i>
-                <span class="footer-text">Apps</span>
+            <div class="footer-btn" data-view="gaming">
+                <i class="fas fa-gamepad footer-icon"></i>
+                <span class="footer-text">Gaming</span>
+            </div>
+            <div class="footer-btn" data-view="chat">
+                <i class="fas fa-comments footer-icon"></i>
+                <span class="footer-text">Social</span>
             </div>
             <div class="footer-btn" data-view="settings">
                 <i class="fas fa-cog footer-icon"></i>
@@ -1030,50 +1634,113 @@
     </div>
 
     <script>
-        // Création des particules animées
-        function createParticles() {
-            const container = document.getElementById('particles');
-            const particleCount = 30;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                // Taille aléatoire
-                const size = Math.random() * 20 + 5;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                
-                // Position aléatoire
-                const posX = Math.random() * 100;
-                particle.style.left = `${posX}%`;
-                
-                // Délai d'animation aléatoire
-                const delay = Math.random() * 15;
-                particle.style.animationDelay = `${delay}s`;
-                
-                container.appendChild(particle);
+        // ==============================
+        // Configuration et initialisation
+        // ==============================
+        
+        // Détection de la langue du système
+        const systemLanguage = navigator.language.split('-')[0] || 'en';
+        document.getElementById('system-lang').value = systemLanguage;
+        
+        // Traduction basique
+        const translations = {
+            'fr': {
+                'searchPlaceholder': 'Rechercher ou entrer une adresse web',
+                'homeSearchPlaceholder': 'Rechercher sur le web ou entrer une adresse',
+                'welcome': 'Bienvenue sur Blink OS!'
+            },
+            'en': {
+                'searchPlaceholder': 'Search or enter web address',
+                'homeSearchPlaceholder': 'Search the web or enter address',
+                'welcome': 'Welcome to Blink OS!'
             }
+        };
+        
+        // Appliquer les traductions
+        function applyTranslations(lang) {
+            const t = translations[lang] || translations['en'];
+            document.getElementById('search-input').placeholder = t.searchPlaceholder;
+            document.getElementById('home-search-input').placeholder = t.homeSearchPlaceholder;
         }
         
+        applyTranslations(systemLanguage);
+        
+        // Gestion des sessions
+        const sessionData = JSON.parse(localStorage.getItem('blinkOS_session') || '{}');
+        
+        // Initialisation des données utilisateur
+        if (!sessionData.user) {
+            sessionData.user = {
+                username: 'Gamer123',
+                email: 'gamer@example.com',
+                theme: '#ff4081',
+                background: 'https://images.unsplash.com/photo-1519681393784-d120267933ba'
+            };
+        }
+        
+        // Initialisation des fichiers
+        if (!sessionData.files) {
+            sessionData.files = [];
+        }
+        
+        // Sauvegarder les données de session
+        function saveSession() {
+            localStorage.setItem('blinkOS_session', JSON.stringify(sessionData));
+            updateStorageDisplay();
+        }
+        
+        // Mettre à jour l'affichage du stockage
+        function updateStorageDisplay() {
+            const totalStorage = 100 * 1024 * 1024; // 100 MB
+            let usedStorage = 0;
+            
+            // Calculer la taille des fichiers
+            sessionData.files.forEach(file => {
+                usedStorage += file.size || 0;
+            });
+            
+            // Ajouter la taille des messages
+            if (sessionData.chatMessages) {
+                const chatData = JSON.stringify(sessionData.chatMessages);
+                usedStorage += new Blob([chatData]).size;
+            }
+            
+            const usedMB = (usedStorage / (1024 * 1024)).toFixed(1);
+            document.getElementById('storage-used').textContent = `${usedMB} MB / 100 MB`;
+        }
+        
+        // Initialiser l'interface utilisateur avec les données de session
+        document.getElementById('username').value = sessionData.user.username;
+        document.getElementById('email').value = sessionData.user.email;
+        document.getElementById('chat-username').textContent = sessionData.user.username;
+        document.documentElement.style.setProperty('--accent', sessionData.user.theme);
+        document.documentElement.style.setProperty('--background-url', `url('${sessionData.user.background}')`);
+        
+        // ==============================
         // Gestion des vues
+        // ==============================
+        
         const views = {
             'home': document.getElementById('home-view'),
             'browser': document.getElementById('browser-view'),
-            'apps': document.getElementById('apps-view'),
-            'settings': document.getElementById('settings-view')
+            'gaming': document.getElementById('gaming-view'),
+            'os': document.getElementById('os-view'),
+            'settings': document.getElementById('settings-view'),
+            'chat': document.getElementById('chat-view'),
+            'files': document.getElementById('files-view'),
+            'android': document.getElementById('android-view')
         };
 
         // Navigation
         function showView(viewId) {
             // Masquer toutes les vues
             Object.values(views).forEach(view => {
-                view.style.display = 'none';
+                if (view) view.style.display = 'none';
             });
             
             // Afficher la vue sélectionnée
             if (views[viewId]) {
-                views[viewId].style.display = 'block';
+                views[viewId].style.display = viewId === 'settings' || viewId === 'files' ? 'block' : 'flex';
                 
                 // Si c'est la vue navigateur, charger la page d'accueil par défaut
                 if (viewId === 'browser') {
@@ -1123,7 +1790,10 @@
             document.querySelector('.app-container').classList.toggle('fullscreen-mode');
         });
 
+        // ==============================
         // Navigation dans le navigateur
+        // ==============================
+        
         const webview = document.getElementById('webview');
         const urlInput = document.getElementById('url-input');
         const searchInput = document.getElementById('search-input');
@@ -1132,12 +1802,20 @@
         function loadUrl(url) {
             try {
                 // Correction pour les URL incomplètes
-                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('file://')) {
                     url = 'https://' + url;
                 }
                 
                 webview.src = url;
                 urlInput.value = url;
+                
+                // Sauvegarder l'historique
+                if (!sessionData.history) sessionData.history = [];
+                sessionData.history.push({
+                    url: url,
+                    timestamp: new Date().toISOString()
+                });
+                saveSession();
             } catch (e) {
                 createNotification('Impossible de charger la page');
             }
@@ -1188,6 +1866,23 @@
             }
         });
 
+        // Plein écran pour le navigateur
+        document.getElementById('fullscreen-btn').addEventListener('click', () => {
+            const container = document.querySelector('.webview-container');
+            container.classList.toggle('fullscreen');
+            
+            if (container.classList.contains('fullscreen')) {
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'fullscreen-close';
+                closeBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                closeBtn.addEventListener('click', () => {
+                    container.classList.remove('fullscreen');
+                    closeBtn.remove();
+                });
+                container.appendChild(closeBtn);
+            }
+        });
+
         // Mise à jour de l'URL lors de la navigation
         webview.addEventListener('load', () => {
             try {
@@ -1206,51 +1901,391 @@
             });
         });
 
-        // Recherche vocale
-        function startVoiceSearch(inputElement) {
-            createNotification('Recherche vocale activée - Parlez maintenant');
-            inputElement.placeholder = "Écoute en cours...";
-            
-            // Animation du micro
-            const micIcon = inputElement.nextElementSibling;
-            micIcon.classList.add('pulse');
-            
-            // Simulation de la reconnaissance vocale
-            setTimeout(() => {
-                const phrases = [
-                    "Rechercher des jeux Nintendo",
-                    "Meilleurs jeux pour Switch",
-                    "Actualités gaming",
-                    "Tutoriels Breath of the Wild",
-                    "Comparatif Nintendo Switch"
-                ];
-                
-                const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-                inputElement.value = randomPhrase;
-                micIcon.classList.remove('pulse');
-                createNotification(`Reconnu: "${randomPhrase}"`);
-                
-                // Recherche automatique après reconnaissance
-                setTimeout(() => {
-                    if (inputElement === homeSearchInput) {
-                        searchWeb(randomPhrase);
-                    } else {
-                        searchInput.value = randomPhrase;
-                        searchWeb(randomPhrase);
-                    }
-                }, 1000);
-            }, 2000);
+        // ==============================
+        // Cloud Gaming
+        // ==============================
+        
+        document.getElementById('geforce-btn').addEventListener('click', () => {
+            showView('browser');
+            loadUrl('https://play.geforcenow.com');
+            createNotification('Lancement de GeForce NOW...');
+        });
+        
+        document.getElementById('xcloud-btn').addEventListener('click', () => {
+            showView('browser');
+            loadUrl('https://www.xbox.com/play');
+            createNotification('Lancement de Xbox Cloud Gaming...');
+        });
+        
+        document.getElementById('stadia-btn').addEventListener('click', () => {
+            showView('browser');
+            loadUrl('https://stadia.google.com');
+            createNotification('Lancement de Google Stadia...');
+        });
+
+        // ==============================
+        // Systèmes d'exploitation
+        // ==============================
+        
+        document.getElementById('android-btn').addEventListener('click', () => {
+            showView('android');
+            createNotification('Émulateur Android démarré - Brawl Stars');
+        });
+        
+        document.getElementById('exit-android').addEventListener('click', () => {
+            showView('os');
+        });
+        
+        document.getElementById('ubuntu-btn').addEventListener('click', () => {
+            showView('browser');
+            loadUrl('https://ubuntu.com');
+            createNotification('Lancement d\'Ubuntu Desktop...');
+        });
+        
+        document.getElementById('windows-btn').addEventListener('click', () => {
+            showView('browser');
+            loadUrl('https://windows365.microsoft.com');
+            createNotification('Lancement de Windows 10...');
+        });
+        
+        document.getElementById('chrome-btn').addEventListener('click', () => {
+            showView('browser');
+            loadUrl('https://chromeos.dev');
+            createNotification('Lancement de Chrome OS...');
+        });
+
+        // ==============================
+        // Chat social
+        // ==============================
+        
+        // Initialiser les messages de chat
+        if (!sessionData.chatMessages) {
+            sessionData.chatMessages = [
+                {
+                    user: 'Supercell',
+                    content: 'Salut! Comment vas-tu?',
+                    time: '10:25',
+                    self: false
+                },
+                {
+                    user: sessionData.user.username,
+                    content: 'Très bien, merci! J\'adore Blink OS sur Switch!',
+                    time: '10:26',
+                    self: true
+                },
+                {
+                    user: 'Supercell',
+                    content: 'Tu as essayé Brawl Stars? C\'est incroyable!',
+                    time: '10:27',
+                    self: false
+                }
+            ];
+            saveSession();
         }
-
-        document.getElementById('voice-search').addEventListener('click', () => {
-            startVoiceSearch(searchInput);
+        
+        // Afficher les messages de chat
+        function renderChatMessages() {
+            const chatContainer = document.getElementById('chat-messages');
+            chatContainer.innerHTML = '';
+            
+            sessionData.chatMessages.forEach(msg => {
+                const messageElement = document.createElement('div');
+                messageElement.className = `chat-message ${msg.self ? 'self' : ''}`;
+                
+                messageElement.innerHTML = `
+                    <div class="message-user">${msg.user}</div>
+                    <div class="message-content">${msg.content}</div>
+                    <div class="message-time">${msg.time}</div>
+                `;
+                
+                if (msg.media) {
+                    const mediaElement = document.createElement(msg.media.type === 'image' ? 'img' : 'video');
+                    mediaElement.className = 'message-media';
+                    mediaElement.src = msg.media.src;
+                    if (msg.media.type === 'video') {
+                        mediaElement.controls = true;
+                    }
+                    messageElement.querySelector('.message-content').appendChild(mediaElement);
+                }
+                
+                chatContainer.appendChild(messageElement);
+            });
+            
+            // Défilement vers le bas
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // Initialiser l'affichage des messages
+        renderChatMessages();
+        
+        // Envoyer un message
+        document.getElementById('chat-send').addEventListener('click', () => {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                const now = new Date();
+                const time = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+                
+                const newMessage = {
+                    user: sessionData.user.username,
+                    content: message,
+                    time: time,
+                    self: true
+                };
+                
+                sessionData.chatMessages.push(newMessage);
+                saveSession();
+                renderChatMessages();
+                
+                // Réponse automatique
+                setTimeout(() => {
+                    const replies = [
+                        "C'est génial!",
+                        "Tu as essayé le nouveau jeu?",
+                        "Je suis d'accord",
+                        "Comment ça marche sur Switch?"
+                    ];
+                    
+                    const botMessage = {
+                        user: 'Supercell',
+                        content: replies[Math.floor(Math.random() * replies.length)],
+                        time: `${now.getHours()}:${(now.getMinutes() + 1).toString().padStart(2, '0')}`,
+                        self: false
+                    };
+                    
+                    sessionData.chatMessages.push(botMessage);
+                    saveSession();
+                    renderChatMessages();
+                }, 2000);
+                
+                input.value = '';
+            }
+        });
+        
+        document.getElementById('chat-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('chat-send').click();
+            }
+        });
+        
+        // Envoyer un message vocal (simulé)
+        document.getElementById('voice-btn').addEventListener('click', () => {
+            createNotification('Enregistrement vocal en cours...');
+            
+            // Simuler un enregistrement vocal
+            setTimeout(() => {
+                const now = new Date();
+                const time = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+                
+                const newMessage = {
+                    user: sessionData.user.username,
+                    content: 'Message vocal',
+                    time: time,
+                    self: true,
+                    media: {
+                        type: 'audio',
+                        src: 'https://example.com/audio.mp3' // URL simulée
+                    }
+                };
+                
+                sessionData.chatMessages.push(newMessage);
+                saveSession();
+                renderChatMessages();
+                createNotification('Message vocal envoyé');
+            }, 2000);
+        });
+        
+        // Envoyer une photo (simulé)
+        document.getElementById('photo-btn').addEventListener('click', () => {
+            createNotification('Envoi de photo...');
+            
+            // Simuler une photo
+            setTimeout(() => {
+                const now = new Date();
+                const time = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+                
+                const newMessage = {
+                    user: sessionData.user.username,
+                    content: 'Photo partagée',
+                    time: time,
+                    self: true,
+                    media: {
+                        type: 'image',
+                        src: 'https://images.unsplash.com/photo-1519681393784-d120267933ba'
+                    }
+                };
+                
+                sessionData.chatMessages.push(newMessage);
+                saveSession();
+                renderChatMessages();
+                createNotification('Photo envoyée');
+            }, 1000);
+        });
+        
+        // Envoyer une vidéo (simulé)
+        document.getElementById('video-btn').addEventListener('click', () => {
+            createNotification('Envoi de vidéo...');
+            
+            // Simuler une vidéo
+            setTimeout(() => {
+                const now = new Date();
+                const time = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+                
+                const newMessage = {
+                    user: sessionData.user.username,
+                    content: 'Vidéo partagée',
+                    time: time,
+                    self: true,
+                    media: {
+                        type: 'video',
+                        src: 'https://example.com/video.mp4' // URL simulée
+                    }
+                };
+                
+                sessionData.chatMessages.push(newMessage);
+                saveSession();
+                renderChatMessages();
+                createNotification('Vidéo envoyée');
+            }, 1000);
         });
 
-        document.getElementById('home-voice-search').addEventListener('click', () => {
-            startVoiceSearch(homeSearchInput);
+        // ==============================
+        // Gestion des fichiers
+        // ==============================
+        
+        // Scanner QR Code
+        document.getElementById('scan-qr-btn').addEventListener('click', () => {
+            const scanner = document.getElementById('qr-scanner');
+            scanner.style.display = 'flex';
+            
+            const video = document.getElementById('qr-video');
+            const resultElement = document.getElementById('qr-result');
+            
+            // Accéder à la caméra
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(stream => {
+                    video.srcObject = stream;
+                    video.play();
+                    
+                    // Détection de QR code
+                    requestAnimationFrame(tick);
+                    
+                    function tick() {
+                        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                            const canvas = document.createElement('canvas');
+                            canvas.width = video.videoWidth;
+                            canvas.height = video.videoHeight;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                            
+                            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                            const code = jsQR(imageData.data, imageData.width, imageData.height);
+                            
+                            if (code) {
+                                resultElement.textContent = `QR Code détecté: ${code.data}`;
+                                
+                                // Traiter le transfert de fichier (simulé)
+                                setTimeout(() => {
+                                    createNotification('Transfert de fichier en cours...');
+                                    
+                                    // Ajouter le fichier aux données de session
+                                    sessionData.files.push({
+                                        name: `fichier-${new Date().getTime()}.jpg`,
+                                        type: 'image',
+                                        size: 1024 * 1024, // 1MB
+                                        date: new Date().toISOString()
+                                    });
+                                    
+                                    saveSession();
+                                    renderFileGrid();
+                                    createNotification('Fichier transféré avec succès!');
+                                    
+                                    // Fermer le scanner
+                                    scanner.style.display = 'none';
+                                    stream.getTracks().forEach(track => track.stop());
+                                }, 1000);
+                            }
+                        }
+                        
+                        requestAnimationFrame(tick);
+                    }
+                })
+                .catch(err => {
+                    console.error('Erreur d\'accès à la caméra:', err);
+                    resultElement.textContent = 'Impossible d\'accéder à la caméra';
+                });
+        });
+        
+        // Fermer le scanner QR
+        document.getElementById('close-qr').addEventListener('click', () => {
+            const scanner = document.getElementById('qr-scanner');
+            scanner.style.display = 'none';
+            
+            // Arrêter le flux vidéo
+            const video = document.getElementById('qr-video');
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+        });
+        
+        // Afficher la grille de fichiers
+        function renderFileGrid() {
+            const fileGrid = document.getElementById('file-grid');
+            fileGrid.innerHTML = '';
+            
+            sessionData.files.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                
+                let iconClass = 'fas fa-file';
+                if (file.type === 'image') iconClass = 'fas fa-file-image';
+                else if (file.type === 'video') iconClass = 'fas fa-file-video';
+                else if (file.type === 'audio') iconClass = 'fas fa-file-audio';
+                else if (file.type === 'pdf') iconClass = 'fas fa-file-pdf';
+                
+                fileItem.innerHTML = `
+                    <div class="file-icon"><i class="${iconClass}"></i></div>
+                    <div class="file-name">${file.name}</div>
+                `;
+                
+                fileItem.addEventListener('click', () => {
+                    createNotification(`Ouverture de ${file.name}`);
+                    // Ici, vous implémenteriez l'ouverture du fichier
+                });
+                
+                fileGrid.appendChild(fileItem);
+            });
+            
+            // Ajouter un élément pour ajouter de nouveaux fichiers
+            const addItem = document.createElement('div');
+            addItem.className = 'file-item';
+            addItem.innerHTML = `
+                <div class="file-icon"><i class="fas fa-plus"></i></div>
+                <div class="file-name">Ajouter</div>
+            `;
+            addItem.addEventListener('click', () => {
+                createNotification('Utilisez le scanner QR pour ajouter des fichiers');
+                document.getElementById('scan-qr-btn').click();
+            });
+            fileGrid.appendChild(addItem);
+        }
+        
+        // Initialiser l'affichage des fichiers
+        renderFileGrid();
+        
+        // Effacer le cache
+        document.getElementById('clear-cache').addEventListener('click', () => {
+            sessionData.files = [];
+            saveSession();
+            renderFileGrid();
+            createNotification('Cache effacé avec succès');
         });
 
+        // ==============================
         // Personnalisation
+        // ==============================
+        
         document.querySelectorAll('.theme-color').forEach(color => {
             color.addEventListener('click', function() {
                 document.querySelectorAll('.theme-color').forEach(c => c.classList.remove('active'));
@@ -1258,6 +2293,8 @@
                 
                 const newColor = this.getAttribute('data-color');
                 document.documentElement.style.setProperty('--accent', newColor);
+                sessionData.user.theme = newColor;
+                saveSession();
                 createNotification(`Couleur d'accent changée`);
             });
         });
@@ -1269,6 +2306,8 @@
                 
                 const newBg = this.getAttribute('data-bg');
                 document.documentElement.style.setProperty('--background-url', `url('${newBg}')`);
+                sessionData.user.background = newBg;
+                saveSession();
                 createNotification(`Fond d'écran changé`);
             });
         });
@@ -1278,6 +2317,22 @@
             createNotification('Lien de réinitialisation envoyé à votre email');
         });
 
+        // Sauvegarder les modifications du profil
+        document.getElementById('username').addEventListener('change', function() {
+            sessionData.user.username = this.value;
+            document.getElementById('chat-username').textContent = this.value;
+            saveSession();
+        });
+        
+        document.getElementById('email').addEventListener('change', function() {
+            sessionData.user.email = this.value;
+            saveSession();
+        });
+
+        // ==============================
+        // Fonctions utilitaires
+        // ==============================
+        
         // Fonction de notification
         function createNotification(message) {
             const notification = document.createElement('div');
@@ -1291,9 +2346,79 @@
             }, 2300);
         }
 
+        // Clavier virtuel
+        const keyboard = document.getElementById('virtual-keyboard');
+        const keyboardKeys = [
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+            'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
+            'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '↵',
+            'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '⌫',
+            'Espace', '&', '@', '#', '$', '%', '?', '!', "'", '⇧'
+        ];
+        
+        // Générer les touches du clavier
+        keyboardKeys.forEach(key => {
+            const keyElement = document.createElement('button');
+            keyElement.className = 'keyboard-key';
+            keyElement.textContent = key;
+            
+            if (key === '↵' || key === '⌫' || key === 'Espace' || key === '⇧') {
+                keyElement.classList.add('special');
+            }
+            
+            keyElement.addEventListener('click', () => {
+                handleKeyPress(key);
+            });
+            
+            keyboard.appendChild(keyElement);
+        });
+        
+        function handleKeyPress(key) {
+            let activeElement = document.activeElement;
+            
+            if (!activeElement) return;
+            
+            switch(key) {
+                case '⌫':
+                    activeElement.value = activeElement.value.slice(0, -1);
+                    break;
+                case 'Espace':
+                    activeElement.value += ' ';
+                    break;
+                case '↵':
+                    if (activeElement.tagName === 'INPUT') {
+                        activeElement.blur();
+                    }
+                    break;
+                case '⇧':
+                    // Basculer entre majuscules et minuscules
+                    keyboardKeys.forEach((k, i) => {
+                        if (k.length === 1 && k.match(/[a-z]/i)) {
+                            keyboard.children[i].textContent = 
+                                keyboard.children[i].textContent === k.toUpperCase() 
+                                ? k.toLowerCase() 
+                                : k.toUpperCase();
+                        }
+                    });
+                    break;
+                default:
+                    activeElement.value += key;
+            }
+            
+            // Déclencher l'événement input
+            const event = new Event('input', { bubbles: true });
+            activeElement.dispatchEvent(event);
+        }
+        
+        // Toggle clavier
+        document.getElementById('keyboard-toggle').addEventListener('click', () => {
+            keyboard.classList.toggle('active');
+        });
+
         // Initialiser la vue par défaut
         showView('home');
-        createParticles();
+        createNotification(translations[systemLanguage]?.welcome || 'Welcome to Blink OS!');
+        updateStorageDisplay();
     </script>
 </body>
 </html>
